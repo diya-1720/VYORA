@@ -121,7 +121,7 @@ export default function MovieCard({ movie, onSelectMovie, compact = false }) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              borderTop: '1px solid rgba(246, 240, 230, 0.15)',
+              borderTop: '1px solid rgba(239, 231, 219, 0.15)',
               paddingTop: '8px'
             }}
           >

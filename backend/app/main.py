@@ -1,7 +1,15 @@
+import sys
+from pathlib import Path
+
+# Ensure backend directory is in sys.path when launched from repository root
+BACKEND_DIR = Path(__file__).resolve().parents[1]
+if str(BACKEND_DIR) not in sys.path:
+    sys.path.insert(0, str(BACKEND_DIR))
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.routes import movies, users
+from app.routes import movies, users, recommendations
 from app.database import Base, engine
 from app.models.user import User
 
@@ -17,7 +25,11 @@ Base.metadata.create_all(bind=engine)
 # FASTAPI APP
 # =========================
 
-app = FastAPI()
+app = FastAPI(
+    title="VYORA Recommendation API",
+    description="Reel Vibe Movie Recommendation & Discovery Engine API",
+    version="1.0.0",
+)
 
 
 # =========================
@@ -42,12 +54,20 @@ app.add_middleware(
 
 app.include_router(
     movies.router,
-    prefix="/api/movies"
+    prefix="/api/movies",
+    tags=["Movies"]
 )
 
 app.include_router(
     users.router,
-    prefix="/api/users"
+    prefix="/api/users",
+    tags=["Users"]
+)
+
+app.include_router(
+    recommendations.router,
+    prefix="/api/recommendations",
+    tags=["Recommendations"]
 )
 
 

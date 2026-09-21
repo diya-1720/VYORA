@@ -17,7 +17,8 @@
   --vyora-accent: #A875FF;         /* Electric Lavender */
   --vyora-accent-secondary: #E46BA8; /* Cosmic Pink */
   --vyora-gold: #E7C46A;           /* Celestial Gold */
-  --vyora-text: #F6F0E6;           /* Warm Moon */
+  --vyora-text: #EFE7DB;           /* Aesthetic Warm Linen / Antique Alabaster */
+  --vyora-text-heading: #F3ECE1;   /* Luminous Warm Off-White for Display Titles */
   --vyora-text-muted: #B8A9C7;     /* Dusty Lavender */
   --vyora-border: rgba(168, 117, 255, 0.16);
   --vyora-border-strong: rgba(168, 117, 255, 0.32);
@@ -36,7 +37,7 @@
   
   --text-charcoal: var(--vyora-text);
   --text-muted: var(--vyora-text-muted);
-  --text-light: #FAF6F0;
+  --text-light: #EFE7DB;
 
   --border-light: var(--vyora-border);
   --border-medium: var(--vyora-border-strong);
@@ -53,13 +54,14 @@
 
 /* Light Mode Alternative */
 [data-theme="day"], .theme-day {
-  --vyora-bg: #F6F0E6;
+  --vyora-bg: #EFE7DB;
   --vyora-bg-secondary: #E8DFF2;
   --vyora-surface: #FAF6FD;
   --vyora-accent: #8051D6;
   --vyora-accent-secondary: #C95A8A;
   --vyora-gold: #B28A35;
   --vyora-text: #211A23;
+  --vyora-text-heading: #211A23;
   --vyora-text-muted: #5C4A66;
   --vyora-border: rgba(128, 81, 214, 0.16);
   --vyora-border-strong: rgba(128, 81, 214, 0.3);
@@ -121,49 +123,11 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Subtle Animated Cosmic Multiverse Atmosphere for Night Mode (Lag-Free 60fps) */
-body::after {
-  content: "";
-  position: fixed;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  pointer-events: none;
-  z-index: -1;
-  background: 
-    radial-gradient(ellipse at 30% 30%, rgba(168, 117, 255, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 70% 70%, rgba(228, 107, 168, 0.06) 0%, transparent 50%);
-  will-change: transform;
-  transform: translate3d(0, 0, 0);
-  animation: cosmicAtmosphereDrift 22s ease-in-out infinite alternate;
-}
-
-@keyframes cosmicAtmosphereDrift {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  50% { transform: translate3d(-2%, 1.5%, 0) scale(1.02); }
-  100% { transform: translate3d(1.5%, -1.5%, 0) scale(1); }
-}
-
 /* Hardware Acceleration & GPU Optimizations */
 .gpu-accelerated {
   will-change: transform;
   transform: translateZ(0);
   backface-visibility: hidden;
-}
-
-/* Subtle Film & Cosmic Atmosphere Overlay */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 9999;
-  opacity: 0.035;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
 /* Typography Classes */
@@ -180,7 +144,7 @@ h1, h2, h3, .heading-editorial {
   font-family: var(--font-display);
   font-weight: 400;
   letter-spacing: 0.03em;
-  color: var(--vyora-text);
+  color: var(--vyora-text-heading);
   line-height: 1.15;
 }
 
@@ -481,7 +445,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
    ========================================================================== */
 .text-3d-vyora {
   font-family: var(--font-display);
-  color: var(--vyora-text);
+  color: var(--vyora-text-heading);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-shadow: 
@@ -509,11 +473,11 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .text-shimmer {
   background: linear-gradient(
     90deg,
-    var(--vyora-text) 0%,
+    var(--vyora-text-heading) 0%,
     var(--vyora-accent) 25%,
     var(--vyora-gold) 50%,
     var(--vyora-accent-secondary) 75%,
-    var(--vyora-text) 100%
+    var(--vyora-text-heading) 100%
   );
   background-size: 200% auto;
   color: transparent;
@@ -552,4 +516,85 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .animate-progress-glow {
   animation: progressPulseGlow 1.5s ease-in-out infinite;
 }
+
+/* ==========================================================================
+   VYORA — Cinematic Living Background & Harmonic Drift Animations
+   ========================================================================== */
+@keyframes cinematicNebulaDrift1 {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(50px, -60px, 0) scale(1.15) rotate(12deg); }
+  100% { transform: translate3d(-30px, 40px, 0) scale(0.95) rotate(-10deg); }
+}
+
+@keyframes cinematicNebulaDrift2 {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(-60px, 50px, 0) scale(1.2) rotate(-15deg); }
+  100% { transform: translate3d(40px, -35px, 0) scale(0.92) rotate(10deg); }
+}
+
+@keyframes cinematicNebulaDrift3 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  33% { transform: translate3d(35px, 45px, 0) scale(1.12); }
+  66% { transform: translate3d(-45px, -30px, 0) scale(0.94); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+
+@keyframes cinematicNebulaDrift4 {
+  0% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(-40px, -50px, 0) scale(1.16); }
+  100% { transform: translate3d(30px, 35px, 0) scale(0.92); }
+}
+
+@keyframes cinematicPulseGlow {
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50% { opacity: 0.95; transform: scale(1.06); }
+}
+
+/* ==========================================================================
+   Sequential Entrance Choreography (Cubic-Bezier Silk Curve)
+   ========================================================================== */
+@keyframes sequentialEntrance {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes sequentialEntranceScale {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 36px, 0) scale(0.94);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+.seq-item {
+  opacity: 0;
+  animation: sequentialEntrance 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.seq-item-scale {
+  opacity: 0;
+  animation: sequentialEntranceScale 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.seq-delay-1 { animation-delay: 0.06s; }
+.seq-delay-2 { animation-delay: 0.18s; }
+.seq-delay-3 { animation-delay: 0.32s; }
+.seq-delay-4 { animation-delay: 0.46s; }
+.seq-delay-5 { animation-delay: 0.60s; }
+.seq-delay-6 { animation-delay: 0.74s; }
+.seq-delay-7 { animation-delay: 0.88s; }
+.seq-delay-8 { animation-delay: 1.02s; }
+.seq-delay-9 { animation-delay: 1.16s; }
+.seq-delay-10 { animation-delay: 1.30s; }
 

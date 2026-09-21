@@ -92,10 +92,11 @@ export default function MoodSelector({ moods, selectedMood, onSelectMood, onRese
           gap: '20px'
         }}
       >
-        {moods.map(mood => (
+        {moods.map((mood, idx) => (
           <MoodCard
             key={mood.id}
             mood={mood}
+            index={idx}
             isSelected={selectedMood?.id === mood.id}
             isAnySelected={!!selectedMood}
             onSelect={onSelectMood}

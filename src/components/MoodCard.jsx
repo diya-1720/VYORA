@@ -1,7 +1,7 @@
 import React from 'react';
 import * as Icons from 'lucide-react';
 
-export default function MoodCard({ mood, isSelected, isAnySelected, onSelect }) {
+export default function MoodCard({ mood, isSelected, isAnySelected, onSelect, index = 0 }) {
   const IconComponent = Icons[mood.icon] || Icons.Sparkles;
 
   return (
@@ -24,9 +24,10 @@ export default function MoodCard({ mood, isSelected, isAnySelected, onSelect }) 
         flexDirection: 'column',
         justifyContent: 'space-between',
         minHeight: '180px',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        animationDelay: `${Math.min(index * 65 + 520, 1200)}ms`,
       }}
-      className="mood-card"
+      className="mood-card seq-item"
     >
       {/* Top Accent Bar */}
       <div
@@ -59,7 +60,7 @@ export default function MoodCard({ mood, isSelected, isAnySelected, onSelect }) 
               height: '44px',
               borderRadius: '3px',
               backgroundColor: isSelected ? mood.accent : 'var(--bg-card)',
-              color: isSelected ? '#FAF6F0' : mood.accent,
+              color: isSelected ? 'var(--vyora-text)' : mood.accent,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

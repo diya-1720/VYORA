@@ -20,6 +20,7 @@ import MyUniverse from './pages/MyUniverse';
 import MovieDetailsModal from './components/MovieDetailsModal';
 import AuthPromptModal from './components/AuthPromptModal';
 import IntroSplashScreen from './components/IntroSplashScreen';
+import CinematicBackground from './components/CinematicBackground';
 
 import { searchMovies, getMovieById } from './services/api';
 
@@ -69,13 +70,20 @@ export default function App() {
 
   const [showScrollTop, setShowScrollTop] = useState(false);
 
-  // Scroll position listener for Scroll-To-Top button
+  // Optimized scroll position listener for Scroll-To-Top button
   useEffect(() => {
+    let ticking = false;
+
     const handleScroll = () => {
-      if (window.scrollY > 350) {
-        setShowScrollTop(true);
-      } else {
-        setShowScrollTop(false);
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          setShowScrollTop((prev) => {
+            const next = window.scrollY > 350;
+            return prev !== next ? next : prev;
+          });
+          ticking = false;
+        });
+        ticking = true;
       }
     };
 
@@ -200,10 +208,14 @@ export default function App() {
           flexDirection: 'column',
           backgroundColor: 'var(--bg-main)',
           color: 'var(--text-charcoal)',
+          position: 'relative',
           transition:
             'background-color 0.4s ease, color 0.4s ease',
         }}
       >
+        {/* CINEMATIC LIVING BACKGROUND */}
+        <CinematicBackground theme={theme} />
+
         {/* NAVBAR */}
         <Navbar
           onOpenSearch={() =>
@@ -501,6 +513,8 @@ export default function App() {
         <div
           style={{
             flexGrow: 1,
+            position: 'relative',
+            zIndex: 1,
           }}
         >
           <Routes>

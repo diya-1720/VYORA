@@ -1,9 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getMovieById, MOVIES, rateMovie, toggleWatchlist } from '../services/api';
+import {
+  getMovieById,
+  MOVIES,
+  rateMovie,
+  toggleWatchlist,
+  markMovieWatched,
+  isMovieInWatchlist,
+  isMovieWatched,
+  getMovieRating,
+} from '../services/api';
 import MovieDNA from '../components/MovieDNA';
 import RecommendationExplanation from '../components/RecommendationExplanation';
 import MovieConstellation from '../components/MovieConstellation';
+import MovieRecommendations from '../components/MovieRecommendations';
 import WatchPlatforms from '../components/WatchPlatforms';
 import { Star, Bookmark, CheckCircle, ArrowLeft, Heart, Users, Sparkles } from 'lucide-react';
 
@@ -17,12 +27,17 @@ export default function MovieDetails({ onSelectMovie }) {
 
   useEffect(() => {
     async function load() {
+      const activeId = id || 'interstellar-2014';
       try {
-        const data = await getMovieById(id || 'interstellar-2014');
+        const data = await getMovieById(activeId);
         setMovie(data);
       } catch (err) {
         setMovie(MOVIES[0]);
       }
+
+      setInWatchlist(isMovieInWatchlist(activeId));
+      setIsWatched(isMovieWatched(activeId));
+      setUserRating(getMovieRating(activeId));
     }
     load();
   }, [id]);
@@ -35,8 +50,14 @@ export default function MovieDetails({ onSelectMovie }) {
   };
 
   const handleToggleWatchlist = async () => {
-    setInWatchlist(!inWatchlist);
-    await toggleWatchlist(movie.id);
+    const res = await toggleWatchlist(movie.id);
+    setInWatchlist(res.inWatchlist);
+  };
+
+  const handleToggleWatched = async () => {
+    const nextWatched = !isWatched;
+    setIsWatched(nextWatched);
+    await markMovieWatched(movie.id, nextWatched);
   };
 
   return (
@@ -127,7 +148,7 @@ export default function MovieDetails({ onSelectMovie }) {
             </button>
 
             <button
-              onClick={() => setIsWatched(!isWatched)}
+              onClick={handleToggleWatched}
               className="btn-cinematic-secondary"
             >
               <CheckCircle size={18} color={isWatched ? "var(--accent-burnt-orange)" : "currentColor"} />
@@ -175,6 +196,15 @@ export default function MovieDetails({ onSelectMovie }) {
         constellationData={movie.constellation}
         onSelectConnectedMovie={(connId) => {
           navigate(`/movie/${connId}`);
+        }}
+      />
+
+      {/* Recommended For You - Hybrid Similarity Engine */}
+      <MovieRecommendations
+        currentMovie={movie}
+        onSelectMovie={(selectedMovie) => {
+          navigate(`/movie/${selectedMovie.id}`);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
       />
     </main>

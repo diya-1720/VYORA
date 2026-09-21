@@ -3,14 +3,14 @@ import SectionTitle from './SectionTitle';
 import MovieCard from './MovieCard';
 import { SlidersHorizontal, Sparkles } from 'lucide-react';
 
-export default function MovieGrid({ movies, selectedMood, onSelectMovie }) {
+export default function MovieGrid({ movies, selectedMood, onSelectMovie, isPreFiltered = false }) {
   const [activeGenreFilter, setActiveGenreFilter] = useState('All');
 
   const genres = ['All', 'Sci-Fi', 'Drama', 'Comedy', 'Mystery', 'Adventure', 'Action'];
 
   const filteredMovies = movies.filter(movie => {
-    const matchesGenre = activeGenreFilter === 'All' || movie.genres.includes(activeGenreFilter);
-    const matchesMood = !selectedMood || movie.moods.includes(selectedMood.id);
+    const matchesGenre = activeGenreFilter === 'All' || movie.genres?.includes(activeGenreFilter);
+    const matchesMood = (!selectedMood || isPreFiltered) ? true : movie.moods?.includes(selectedMood.id);
     return matchesGenre && matchesMood;
   });
 

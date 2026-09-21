@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MovieDNA from './MovieDNA';
 import RecommendationExplanation from './RecommendationExplanation';
 import MovieConstellation from './MovieConstellation';
+import MovieRecommendations from './MovieRecommendations';
+import {
+  toggleWatchlist,
+  markMovieWatched,
+  rateMovie,
+  isMovieInWatchlist,
+  isMovieWatched,
+  getMovieRating,
+} from '../services/api';
 import { X, Star, Bookmark, CheckCircle, ShieldCheck } from 'lucide-react';
 
 export default function MovieDetailsModal({ movie, onClose, onSelectConnectedMovie }) {
@@ -9,7 +18,31 @@ export default function MovieDetailsModal({ movie, onClose, onSelectConnectedMov
   const [inWatchlist, setInWatchlist] = useState(false);
   const [watched, setWatched] = useState(false);
 
+  useEffect(() => {
+    if (movie?.id) {
+      setInWatchlist(isMovieInWatchlist(movie.id));
+      setWatched(isMovieWatched(movie.id));
+      setUserRating(getMovieRating(movie.id) || null);
+    }
+  }, [movie?.id]);
+
   if (!movie) return null;
+
+  const handleToggleWatchlist = async () => {
+    const res = await toggleWatchlist(movie.id);
+    setInWatchlist(res.inWatchlist);
+  };
+
+  const handleToggleWatched = async () => {
+    const nextWatched = !watched;
+    setWatched(nextWatched);
+    await markMovieWatched(movie.id, nextWatched);
+  };
+
+  const handleRate = async (star) => {
+    setUserRating(star);
+    await rateMovie(movie.id, star);
+  };
 
   return (
     <div
@@ -183,14 +216,14 @@ export default function MovieDetailsModal({ movie, onClose, onSelectConnectedMov
             }}
           >
             <button
-              onClick={() => setInWatchlist(!inWatchlist)}
+              onClick={handleToggleWatchlist}
               style={{
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
                 padding: '10px 16px',
                 backgroundColor: inWatchlist ? 'var(--vyora-accent-secondary)' : 'var(--vyora-bg-secondary)',
-                color: inWatchlist ? '#FFF' : 'var(--vyora-text)',
+                color: 'var(--vyora-text)',
                 border: '1px solid var(--vyora-border-strong)',
                 borderRadius: '3px',
                 fontWeight: 600,
@@ -198,12 +231,12 @@ export default function MovieDetailsModal({ movie, onClose, onSelectConnectedMov
                 cursor: 'pointer'
               }}
             >
-              <Bookmark size={15} fill={inWatchlist ? '#FFF' : 'none'} />
+              <Bookmark size={15} fill={inWatchlist ? 'var(--vyora-text)' : 'none'} />
               <span>{inWatchlist ? 'IN WATCHLIST' : 'ADD TO WATCHLIST'}</span>
             </button>
 
             <button
-              onClick={() => setWatched(!watched)}
+              onClick={handleToggleWatched}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -229,7 +262,7 @@ export default function MovieDetailsModal({ movie, onClose, onSelectConnectedMov
                 {[1, 2, 3, 4, 5].map(star => (
                   <button
                     key={star}
-                    onClick={() => setUserRating(star)}
+                    onClick={() => handleRate(star)}
                     style={{
                       background: 'none',
                       border: 'none',
@@ -272,6 +305,15 @@ export default function MovieDetailsModal({ movie, onClose, onSelectConnectedMov
             currentMovie={movie}
             constellationData={movie.constellation}
             onSelectConnectedMovie={onSelectConnectedMovie}
+          />
+
+          {/* Recommended For You - Hybrid Similarity Engine */}
+          <MovieRecommendations
+            currentMovie={movie}
+            onSelectMovie={(recMovie) => {
+              onSelectConnectedMovie && onSelectConnectedMovie(recMovie.id);
+            }}
+            compact={true}
           />
         </div>
       </div>

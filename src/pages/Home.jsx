@@ -9,10 +9,15 @@ import {
   getMovies,
   getMoods,
   getSharedVibes,
+  getVibeMixerRecommendations,
+  getMoodRecommendations,
 } from '../services/api';
 import {
   Sparkles,
   SlidersHorizontal,
+  RotateCcw,
+  Compass,
+  CheckCircle2,
 } from 'lucide-react';
 
 export default function Home({ onSelectMovie }) {
@@ -22,6 +27,9 @@ export default function Home({ onSelectMovie }) {
   const [sharedVibeData, setSharedVibeData] = useState(null);
   const [showMixer, setShowMixer] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [isMixing, setIsMixing] = useState(false);
+  const [activeMode, setActiveMode] = useState('all'); // 'all' | 'mood' | 'vibeMixer'
+  const [activeMixDetails, setActiveMixDetails] = useState(null);
   const [error, setError] = useState('');
 
   // Load initial data
@@ -51,33 +59,26 @@ export default function Home({ onSelectMovie }) {
     loadData();
   }, []);
 
-  // Select a mood and get matching movies
+  // Select a mood and get matching movies via algorithmic mood engine
   const handleSelectMood = async (mood) => {
     try {
       setError('');
 
       if (selectedMood?.id === mood.id) {
-        setSelectedMood(null);
-        setLoading(true);
-
-        const allMovies = await getMovies({
-          sortBy: 'rating',
-        });
-
-        setMovies(allMovies);
-        setLoading(false);
+        await handleResetFilters();
         return;
       }
 
       setSelectedMood(mood);
+      setActiveMode('mood');
+      setActiveMixDetails(null);
       setLoading(true);
 
-      const filteredMovies = await getMovies({
-        mood: mood.id,
-        sortBy: 'match',
-      });
+      // Call backend algorithmic mood recommendations endpoint
+      const moodRecommendations = await getMoodRecommendations(mood.id);
+      const rankedMovies = moodRecommendations.map((item) => item.movie);
 
-      setMovies(filteredMovies);
+      setMovies(rankedMovies);
       setLoading(false);
 
       // Smooth scroll to recommendations
@@ -89,16 +90,18 @@ export default function Home({ onSelectMovie }) {
         });
       }
     } catch (err) {
-      console.error('Failed to load mood recommendations:', err);
+      console.error('Failed to load mood recommendations from engine:', err);
       setError('Could not load recommendations for this mood.');
       setLoading(false);
     }
   };
 
-  // Reset mood
-  const handleResetMood = async () => {
+  // Reset mood & filters back to complete library
+  const handleResetFilters = async () => {
     try {
       setSelectedMood(null);
+      setActiveMode('all');
+      setActiveMixDetails(null);
       setLoading(true);
       setError('');
 
@@ -115,18 +118,21 @@ export default function Home({ onSelectMovie }) {
     }
   };
 
-  // Vibe Mixer
+  // Vibe Mixer - Connected to FastAPI 7-dimensional sensory engine
   const handleMixVibe = async (mixDimensions) => {
     try {
-      setLoading(true);
+      setIsMixing(true);
       setError('');
 
-      const sorted = await getMovies({
-        sortBy: 'match',
-      });
+      // Call backend FastAPI hybrid vibe recommendation engine
+      const vibeRecommendations = await getVibeMixerRecommendations(mixDimensions);
+      const rankedMovies = vibeRecommendations.map((item) => item.movie);
 
-      setMovies(sorted);
-      setLoading(false);
+      setMovies(rankedMovies);
+      setActiveMode('vibeMixer');
+      setActiveMixDetails(mixDimensions);
+      setSelectedMood(null);
+      setIsMixing(false);
 
       const el = document.getElementById('recommendations');
       if (el) {
@@ -136,9 +142,9 @@ export default function Home({ onSelectMovie }) {
         });
       }
     } catch (err) {
-      console.error('Failed to mix vibe:', err);
-      setError('Could not generate your vibe recommendations.');
-      setLoading(false);
+      console.error('Failed to mix vibe via backend engine:', err);
+      setError('Could not generate your hybrid vibe recommendations. Ensure backend is running.');
+      setIsMixing(false);
     }
   };
 
@@ -158,6 +164,7 @@ export default function Home({ onSelectMovie }) {
         }}
       >
         <div
+          className="seq-item seq-delay-1"
           style={{
             display: 'inline-flex',
             alignItems: 'center',
@@ -187,7 +194,7 @@ export default function Home({ onSelectMovie }) {
         </div>
 
         <h1
-          className="heading-editorial"
+          className="heading-editorial seq-item seq-delay-2"
           style={{
             fontSize: 'clamp(2.2rem, 5vw, 4.2rem)',
             color: 'var(--text-charcoal)',
@@ -198,6 +205,7 @@ export default function Home({ onSelectMovie }) {
         </h1>
 
         <p
+          className="seq-item seq-delay-3"
           style={{
             fontSize: '1rem',
             color: 'var(--text-muted)',
@@ -216,7 +224,7 @@ export default function Home({ onSelectMovie }) {
           onClick={() =>
             setShowMixer(!showMixer)
           }
-          className="btn-cinematic-secondary"
+          className="btn-cinematic-secondary seq-item seq-delay-4"
           style={{
             fontSize: '0.85rem',
             padding: '10px 20px',
@@ -237,17 +245,20 @@ export default function Home({ onSelectMovie }) {
         <div className="animate-fade-in">
           <VibeMixer
             onMixVibe={handleMixVibe}
+            isMixing={isMixing}
           />
         </div>
       )}
 
       {/* Mood Selector */}
-      <MoodSelector
-        moods={moods}
-        selectedMood={selectedMood}
-        onSelectMood={handleSelectMood}
-        onResetMood={handleResetMood}
-      />
+      <div className="seq-item seq-delay-5">
+        <MoodSelector
+          moods={moods}
+          selectedMood={selectedMood}
+          onSelectMood={handleSelectMood}
+          onResetMood={handleResetFilters}
+        />
+      </div>
 
       {/* Error Message */}
       {error && (
@@ -272,9 +283,94 @@ export default function Home({ onSelectMovie }) {
           marginBottom: '60px',
         }}
       >
+        {/* Active Filter Mode Banner / Controls */}
+        {activeMode === 'vibeMixer' && (
+          <div
+            className="animate-fade-in"
+            style={{
+              padding: '20px 24px',
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--accent-burnt-orange)',
+              borderRadius: '6px',
+              marginBottom: '28px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '16px',
+              boxShadow: 'var(--shadow-md)'
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <span className="stamp-badge">✦ LOCAL HYBRID ENGINE</span>
+                <span className="stamp-badge-gold">7-DIMENSIONAL VIBE TUNING ACTIVE</span>
+              </div>
+              <h3 className="heading-editorial" style={{ fontSize: '1.4rem', color: 'var(--text-charcoal)', margin: 0 }}>
+                TAILORED BY YOUR VIBE MIXER
+              </h3>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
+                Displaying films mathematically ranked by proximity to your exact sensory slider vectors.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="btn-cinematic-secondary"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}
+            >
+              <RotateCcw size={14} />
+              <span>RESET TO ALL MOVIES</span>
+            </button>
+          </div>
+        )}
+
+        {activeMode === 'mood' && selectedMood && (
+          <div
+            className="animate-fade-in"
+            style={{
+              padding: '20px 24px',
+              backgroundColor: 'var(--bg-card)',
+              border: '1px solid var(--border-strong)',
+              borderRadius: '6px',
+              marginBottom: '28px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '16px',
+              boxShadow: 'var(--shadow-sm)'
+            }}
+          >
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                <span className="stamp-badge">✦ LOCAL HYBRID ENGINE</span>
+                <span className="stamp-badge-wine">ALGORITHMIC MOOD RANKING</span>
+              </div>
+              <h3 className="heading-editorial" style={{ fontSize: '1.4rem', color: 'var(--text-charcoal)', margin: 0 }}>
+                CURATED FOR: {selectedMood.title.toUpperCase()}
+              </h3>
+              <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
+                Ranked by emotional resonance, atmospheric DNA overlap, and critical benchmark metrics.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="btn-cinematic-secondary"
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem' }}
+            >
+              <RotateCcw size={14} />
+              <span>CLEAR MOOD FILTER</span>
+            </button>
+          </div>
+        )}
+
         <SectionTitle
-          badgeText="YOUR VIBE MATCHES"
-          title="RECOMMENDED FOR YOUR MOOD"
+          badgeText={activeMode === 'vibeMixer' ? "SENSORY VECTORS" : activeMode === 'mood' ? "MOOD CURATION" : "YOUR VIBE MATCHES"}
+          title={activeMode === 'vibeMixer' ? "VIBE MIXER PICKS" : activeMode === 'mood' ? `RECOMMENDED: ${selectedMood?.title || ''}` : "RECOMMENDED FOR YOUR MOOD"}
           subtitle="Editorial film cards complete with vector match percentages, atmosphere tags, and VYORA'S TAKE."
         />
 
@@ -286,13 +382,17 @@ export default function Home({ onSelectMovie }) {
               color: 'var(--text-muted)',
             }}
           >
-            Finding movies for your vibe...
+            <div className="animate-spin" style={{ display: 'inline-block', marginBottom: '12px' }}>
+              <Sparkles size={24} color="var(--accent-burnt-orange)" />
+            </div>
+            <div>Calculating hybrid recommendations with FastAPI engine...</div>
           </div>
         ) : (
           <MovieGrid
             movies={movies}
             selectedMood={selectedMood}
             onSelectMovie={onSelectMovie}
+            isPreFiltered={activeMode !== 'all'}
           />
         )}
       </section>

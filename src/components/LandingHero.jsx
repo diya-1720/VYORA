@@ -15,7 +15,10 @@ export default function LandingHero({ onSignIn }) {
       }}
     >
       {/* Brand Subtitle / Stamp */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}>
+      <div
+        className="seq-item seq-delay-1"
+        style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px', flexWrap: 'wrap' }}
+      >
         <span className="stamp-badge-pink">✦ CINEMATIC CULTURE MAGAZINE</span>
         <span style={{ fontSize: '0.8rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--vyora-text-muted)', fontWeight: 600 }}>
           DISCOVERY ENGINE
@@ -37,7 +40,7 @@ export default function LandingHero({ onSignIn }) {
         {/* Left Column: Brand Title, Tagline & Primary Statement */}
         <div style={{ flex: '1 1 500px', minWidth: '280px' }}>
           <h1
-            className="font-display"
+            className="font-display seq-item seq-delay-2"
             style={{
               fontSize: 'clamp(3.5rem, 8vw, 7.5rem)',
               letterSpacing: '0.02em',
@@ -51,7 +54,7 @@ export default function LandingHero({ onSignIn }) {
           </h1>
 
           <p
-            className="font-display"
+            className="font-display seq-item seq-delay-3"
             style={{
               fontSize: 'clamp(1.5rem, 3.5vw, 2.5rem)',
               fontStyle: 'italic',
@@ -63,6 +66,7 @@ export default function LandingHero({ onSignIn }) {
           </p>
 
           <div
+            className="seq-item seq-delay-4"
             style={{
               padding: '24px 28px',
               backgroundColor: 'var(--vyora-surface)',
@@ -90,7 +94,10 @@ export default function LandingHero({ onSignIn }) {
         </div>
 
         {/* Right Column: Visual Poster Composition */}
-        <div style={{ flex: '1 1 320px', minWidth: '280px', display: 'flex', justifyContent: 'center' }}>
+        <div
+          className="seq-item-scale seq-delay-5"
+          style={{ flex: '1 1 320px', minWidth: '280px', display: 'flex', justifyContent: 'center' }}
+        >
           <div
             style={{
               position: 'relative',
@@ -157,6 +164,7 @@ export default function LandingHero({ onSignIn }) {
         {/* REEL VIBE (Active) */}
         <div
           onClick={() => navigate('/movie-home')}
+          className="seq-item seq-delay-6"
           style={{
             padding: '32px 28px',
             backgroundColor: 'var(--vyora-surface)',
@@ -164,7 +172,7 @@ export default function LandingHero({ onSignIn }) {
             borderRadius: '6px',
             cursor: 'pointer',
             textAlign: 'left',
-            transition: 'transform 0.3s var(--ease-cinematic), boxShadow 0.3s ease',
+            transition: 'transform 0.3s var(--ease-cinematic), box-shadow 0.3s ease',
             boxShadow: 'var(--shadow-md)'
           }}
           onMouseEnter={e => {
@@ -215,6 +223,7 @@ export default function LandingHero({ onSignIn }) {
 
         {/* SOUND VIBE (Coming Soon) */}
         <div
+          className="seq-item seq-delay-7"
           style={{
             padding: '32px 28px',
             backgroundColor: 'var(--vyora-bg-secondary)',
@@ -274,7 +283,10 @@ export default function LandingHero({ onSignIn }) {
       </div>
 
       {/* Auth Options */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
+      <div
+        className="seq-item seq-delay-8"
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}
+      >
         <button
           type="button"
           onClick={() => navigate('/movie-home')}

@@ -277,7 +277,7 @@ export default function VibeLibraryPage({ onSelectMovie }) {
                   : 'transparent',
               color:
                 selectedSubVibe === 'All'
-                  ? '#FFF'
+                  ? 'var(--vyora-text)'
                   : 'var(--text-charcoal)',
               border: '1px solid var(--border-medium)',
               borderRadius: '3px',
@@ -305,7 +305,7 @@ export default function VibeLibraryPage({ onSelectMovie }) {
                     ? 'var(--accent-deep-wine)'
                     : 'var(--bg-card)',
                   color: isActive
-                    ? '#FFF'
+                    ? 'var(--vyora-text)'
                     : 'var(--text-charcoal)',
                   border:
                     '1px solid var(--border-medium)',
